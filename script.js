@@ -62,3 +62,29 @@ function addTodo() {
 
     renderTodoList();
 }
+
+const body = document.body;
+const button = document.getElementById('changeTheme');
+const savedTheme = localStorage.getItem('theme');
+
+if (savedTheme === 'light') {
+    body.classList.add('light-mode');
+    button.textContent = '🌙';
+}
+else {
+    body.classList.remove('light-mode');
+    button.textContent = '☀️';
+}
+
+function changeTheme() {
+    body.classList.toggle('light-mode');
+
+    if (body.classList.contains('light-mode')) {
+        button.textContent = '🌙';
+        localStorage.setItem('theme', 'light');
+    }
+    else {
+        button.textContent = '☀️';
+        localStorage.setItem('theme', 'dark');
+    }
+}
