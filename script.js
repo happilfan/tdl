@@ -52,7 +52,8 @@ function addTodo() {
     todolist.push({
         //name: name,
         //dueDate: dueDate
-        name, dueDate
+        name, dueDate,
+        notified: false
     });
 
     localStorage.setItem('todolist', JSON.stringify(todolist));
@@ -63,28 +64,66 @@ function addTodo() {
     renderTodoList();
 }
 
+function checkDueTasks() {
+    const now = new Date();
+
+    todolist.forEach(todo => {
+        const due = new Date(todo.dueDate);
+
+        if (!todo.notified && now >= due) {
+            new Notification("Task Reminder", {
+                body: todo.name,
+            });
+
+            todo.notified = true;
+
+            localStorage.setItem('todolist', JSON.stringify(todolist));
+        }
+    });
+}
+
+async function requestNotificationPermission() {
+
+    if (Notification.permission === "granted") {
+        alert("Notifications already enabled.");
+        return;
+    }
+
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+        alert("Notifications enabled!");
+    }
+    else {
+        alert("Notifications denied. Check your browser settings.");
+    }
+}
+
 const body = document.body;
 const button = document.getElementById('changeTheme');
 const savedTheme = localStorage.getItem('theme');
 
 if (savedTheme === 'light') {
     body.classList.add('light-mode');
-    button.textContent = '🌙';
+    button.innerHTML = '<img src="./Mr_Shine.png" class="ch-pic">';
 }
 else {
     body.classList.remove('light-mode');
-    button.textContent = '☀️';
+    button.innerHTML = '<img src="./Mr_Bright_2.png" class="ch-pic">';
 }
 
 function changeTheme() {
     body.classList.toggle('light-mode');
 
     if (body.classList.contains('light-mode')) {
-        button.textContent = '🌙';
+        button.innerHTML = '<img src="./Mr_Shine.png" class="ch-pic">';
         localStorage.setItem('theme', 'light');
     }
     else {
-        button.textContent = '☀️';
+        button.innerHTML = '<img src="./Mr_Bright_2.png" class="ch-pic">';
         localStorage.setItem('theme', 'dark');
     }
 }
+
+setInterval(checkDueTasks, 10000);
+checkDueTasks();
