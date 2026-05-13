@@ -6,10 +6,22 @@ body {
     transition: background-color 0.3s, color 0.3s, border 0.3s;
 }
 
-.title {
-    font-size: 20px;
-    font-weight: bold;
+.header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+    .title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .filters, .right-buttons {
+        display: flex;
+        gap: 10px;
+    }
+        .right-buttons {
+            margin-left: auto;
+        }
 
 .todo-grid, .todo-input-grid {
     display: grid;
@@ -23,22 +35,26 @@ body {
         margin-bottom: 30px;
         align-items: stretch;
     }
-    @media (min-width: 1100px) {
-        .todo-grid, .todo-input-grid {
-            grid-template-columns: 1fr 200px 100px;
-        }
+@media (min-width: 1100px) {
+    .todo-grid, .todo-input-grid {
+        grid-template-columns: 1fr 200px 100px;
     }
-    @media (max-width: 500px) {
-        .todo-grid, .todo-input-grid {
-            grid-template-columns: 1fr 200px 100px;
-        }
+}
+@media (max-width: 500px) {
+    .todo-grid, .todo-input-grid {
+        grid-template-columns: 1fr 200px 100px;
     }
+}
 
 .name-input, .date-input {
     font-size: 15px;
     padding: 6px;
 }
-.add-button, .delete-button {
+.add-button,
+.delete-button,
+.filter-button,
+.notification-button,
+.changeTheme-button {
     border: none;
     color: white;
     font-size: 15px;
@@ -52,12 +68,31 @@ body {
         padding-bottom: 10px;
         background-color: darkred;
     }
+    .filter-button {
+        background-color: white;
+        color: black;
+    }
+        .filter-button-active {
+            background-color: green;
+            color: white;
+        }
+    .notification-button, .changeTheme-button {
+        padding: 5px;
+        font-size: 18px;
+        border-radius: 8px;
+    }
+        .ch-pic {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+        }
 
 .todo-input-grid > input,
 .todo-grid > div,
 .todo-grid > li,
 .add-button,
-.delete-button {
+.delete-button,
+.filter-button {
     border: 1px solid white;
     padding: 8px;
 }
@@ -74,52 +109,32 @@ body {
     content: "#" counter(todo) ". ";
 }
 
-.notification-button {
-    position: fixed;
-    top: 10px;
-    right: 68px;
-    padding: 6px 6px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 20px;
+.light-mode {
+    color: black;
+    background-color: white;
 }
-    .light-mode .notification-button {
+    .light-mode .changeTheme-button,
+    .light-mode .notification-button,
+    .light-mode .filter-button {
         background-color: black;
+    }
+    .light-mode .filter-button {
         color: white;
     }
-
-.changeTheme-button {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    padding: 6px 6px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-    .light-mode .changeTheme-button {
-        background-color: black;
-    }
-    .light-mode {
-        color: black;
-        background-color: white;
-    }
+        .light-mode .filter-button-active {
+            background-color: green;
+            color: white;
+        }
     .light-mode .todo-input-grid > input,
     .light-mode .todo-grid > div,
     .light-mode .todo-grid > li,
     .light-mode .add-button,
-    .light-mode .delete-button {
+    .light-mode .delete-button,
+    .light-mode .filter-button
+    {
         border: 1px solid black;
     }
-    .ch-pic {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
-    }
-
-
 
 /*
-1. fix different borders
+. fix different borders
 */
