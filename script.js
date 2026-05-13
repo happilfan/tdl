@@ -1,9 +1,42 @@
 const todolist = JSON.parse(localStorage.getItem('todolist')) || [];
+let currentFilter = 'all';
 
-renderTodoList();
+window.addEventListener('DOMContentLoaded', () => {
+    const allButton = document.querySelector('.filters button');
+    setFilter('all', allButton);
+
+    const monthButton = document.getElementById('monthButton');
+    const monthNames = [
+        'January', 'February', 'March', 'April',
+        'May', 'June', 'July', 'August',
+        'September', 'October', 'November', 'December'
+    ];
+    const currentMonth = new Date().getMonth();
+    monthButton.innerText = monthNames[currentMonth];
+});
+
+function setFilter(filter, clickedButton) {
+    currentFilter = filter;
+    const buttons = document.querySelectorAll('.filter-button');
+
+    buttons.forEach((button) => {
+        if (button === clickedButton) {
+            button.classList.add('filter-button-active');
+        }
+        else {
+            button.classList.remove('filter-button-active');
+        }
+    });
+    renderTodoList();
+}
 
 function renderTodoList() {
     let todolistHTML = '';
+    const now = new Date();
+
+    todolist.sort((a, b) => {
+        return new Date(a.dueDate) - new Date(b.dueDate);
+    });
 
     for (let i = 0; i < todolist.length; i++) {
         const todoObject = todolist[i];
@@ -12,6 +45,34 @@ function renderTodoList() {
         const { name, dueDate } = todoObject;
 
         const dateObj = new Date(dueDate);
+
+        let show = false;
+        if (currentFilter === 'all') {
+            show = true;
+        }
+        else if (currentFilter === 'today') {
+            show = dateObj.toDateString() === now.toDateString();
+        }
+        else if (currentFilter === 'week') {
+            const current = new Date(now);
+
+            const day = current.getDay();
+            const diffToMonday = day === 0 ? -6 : 1 - day;
+
+            const monday = new Date(current);
+            monday.setDate(current.getDate() + diffToMonday);
+            monday.setHours(0, 0, 0, 0);
+
+            const sunday = new Date(monday);
+            sunday.setDate(monday.getDate() + 6);
+            sunday.setHours(23, 59, 59, 999);
+
+            show = dateObj >= monday && dateObj <= sunday;
+        }
+        else if (currentFilter === 'month') {
+            show = dateObj.getMonth() === now.getMonth() && dateObj.getFullYear() === now.getFullYear();
+        }
+        if (!show) continue;
 
         const day = dateObj.getDate();
         const month = dateObj.getMonth() + 1;
@@ -82,14 +143,14 @@ function checkDueTasks() {
     });
 }
 
-async function requestNotificationPermission() {
+function requestNotificationPermission() {
 
     if (Notification.permission === "granted") {
         alert("Notifications already enabled.");
         return;
     }
 
-    const permission = await Notification.requestPermission();
+    Notification.requestPermission().then((permission) => {
 
     if (permission === "granted") {
         alert("Notifications enabled!");
@@ -97,6 +158,7 @@ async function requestNotificationPermission() {
     else {
         alert("Notifications denied. Check your browser settings.");
     }
+    });
 }
 
 const body = document.body;
@@ -125,5 +187,6 @@ function changeTheme() {
     }
 }
 
-setInterval(checkDueTasks, 10000);
+renderTodoList();
 checkDueTasks();
+setInterval(checkDueTasks, 10000);
