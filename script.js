@@ -15,6 +15,22 @@ window.addEventListener('DOMContentLoaded', () => {
     monthButton.innerText = monthNames[currentMonth];
 });
 
+document.querySelector('.js-filter-all')
+    .addEventListener('click', (event) => { setFilter('all', event.currentTarget); });
+document.querySelector('.js-filter-month')
+    .addEventListener('click', (event) => { setFilter('month', event.currentTarget); });
+document.querySelector('.js-filter-week')
+    .addEventListener('click', (event) => { setFilter('week', event.currentTarget); });
+document.querySelector('.js-filter-today')
+    .addEventListener('click', (event) => { setFilter('today', event.currentTarget); });
+
+document.querySelector('.js-notification-button')
+    .addEventListener('click', () => { requestNotificationPermission(); });
+document.querySelector('.js-changeTheme-button')
+    .addEventListener('click', () => { changeTheme(); });
+document.querySelector('.js-add-button')
+    .addEventListener('click', () => { addTodo(); });
+
 function setFilter(filter, clickedButton) {
     currentFilter = filter;
     const buttons = document.querySelectorAll('.filter-button');
@@ -27,26 +43,26 @@ function setFilter(filter, clickedButton) {
             button.classList.remove('filter-button-active');
         }
     });
+
     renderTodoList();
 }
 
 function renderTodoList() {
     let todolistHTML = '';
+
     const now = new Date();
 
     todolist.sort((a, b) => {
         return new Date(a.dueDate) - new Date(b.dueDate);
     });
 
-    for (let i = 0; i < todolist.length; i++) {
-        const todoObject = todolist[i];
+    todolist.forEach((todoObject, index) => {
         //const name = todoObject.name;
         //const dueDate = todoObject.dueDate;
         const { name, dueDate } = todoObject;
-
         const dateObj = new Date(dueDate);
-
         let show = false;
+
         if (currentFilter === 'all') {
             show = true;
         }
@@ -72,7 +88,7 @@ function renderTodoList() {
         else if (currentFilter === 'month') {
             show = dateObj.getMonth() === now.getMonth() && dateObj.getFullYear() === now.getFullYear();
         }
-        if (!show) continue;
+        if (!show) return;
 
         const day = dateObj.getDate();
         const month = dateObj.getMonth() + 1;
@@ -85,23 +101,27 @@ function renderTodoList() {
         const html = `
             <li>${name}</li>
             <div>${formattedDate}</div>
-            <button onclick="
-                todolist.splice(${i}, 1);
-                localStorage.setItem('todolist', JSON.stringify(todolist));
-                renderTodoList();
-            " class="delete-button">Delete</button>
+            <button class="delete-button js-delete-button">Delete</button>
         `;
         todolistHTML += html;
-    }
+    });
 
     document.querySelector('.js-todo-list')
         .innerHTML = todolistHTML;
+
+    document.querySelectorAll('.js-delete-button')
+        .forEach((deleteButton, index) => {
+            deleteButton.addEventListener('click', () => {
+                todolist.splice(index, 1);
+                localStorage.setItem('todolist', JSON.stringify(todolist));
+                renderTodoList();
+            });
+        })
 }
 
 function addTodo() {
     const inputElement = document.querySelector('.js-name-input');
     const name = inputElement.value;
-
     const dateInputElement = document.querySelector('.js-date-input');
     const dueDate = dateInputElement.value;
 
@@ -137,21 +157,18 @@ function checkDueTasks() {
             });
 
             todo.notified = true;
-
             localStorage.setItem('todolist', JSON.stringify(todolist));
         }
     });
 }
 
 function requestNotificationPermission() {
-
     if (Notification.permission === "granted") {
         alert("Notifications already enabled.");
         return;
     }
 
     Notification.requestPermission().then((permission) => {
-
     if (permission === "granted") {
         alert("Notifications enabled!");
     }
