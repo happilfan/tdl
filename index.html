@@ -9,22 +9,22 @@
             <p class="title">Todo List</p>
 
             <div class="filters">
-                <button onclick="setFilter('all', this)" class="filter-button">All</button>
-                <button id="monthButton" onclick="setFilter('month', this)" class="filter-button">Month</button>
-                <button onclick="setFilter('week', this)" class="filter-button">This Week</button>
-                <button onclick="setFilter('today', this)" class="filter-button">Today</button>
+                <button class="filter-button js-filter-all">All</button>
+                <button class="filter-button js-filter-month" id="monthButton">Month</button>
+                <button class="filter-button js-filter-week">This Week</button>
+                <button class="filter-button js-filter-today">Today</button>
             </div>
 
             <div class="right-buttons">
-                <button id="notificationButton" class="notification-button" onclick="requestNotificationPermission()">🔔</button>
-                <button id="changeTheme" class="changeTheme-button" onclick="changeTheme()"><img src="./Mr_Bright_2.png" class="ch-pic"></button>
+                <button id="notificationButton" class="notification-button js-notification-button">🔔</button>
+                <button id="changeTheme" class="changeTheme-button js-changeTheme-button"><img src="./Mr_Bright_2.png" class="ch-pic"></button>
             </div>
         </div>
 
         <div class="todo-input-grid">
             <input placeholder="New Task" class="js-name-input name-input">
             <input type="datetime-local" class="js-date-input date-input">
-            <button onclick="addTodo();" class="add-button">Add</button>
+            <button class="add-button js-add-button">Add</button>
         </div>
         
         <div class="js-todo-list todo-grid"></div>
